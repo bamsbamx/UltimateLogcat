@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import com.anrapps.ultimatelogcat.adapter.AdapterLog;
+import android.support.v7.widget.Toolbar;
 
 public class ActivityMain extends ActionBarActivity {
 	
@@ -18,8 +19,11 @@ public class ActivityMain extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 		
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);		
+		setSupportActionBar(toolbar);
+		
 		String[] dataset = new String[20];
-		for (int i = 1; i<20; i++) {
+		for (int i = 0; i<20; i++) {
 			dataset[i] = "Item " + i;
 		}
 		
