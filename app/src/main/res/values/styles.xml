@@ -14,7 +14,18 @@
         <item name="android:windowNoTitle">true</item>
 		
     </style>
+	
+	<style name="AppTheme.Base.Dark" parent="Theme.AppCompat" >
+		<item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">?colorPrimary</item>
+
+		<!-- TOOLBAR -->
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+	</style>
 
     <style name="AppTheme" parent="AppTheme.Base" />
+		
+	<style name="AppTheme.Dark" parent="AppTheme.Base.Dark" />
 
 </resources>
