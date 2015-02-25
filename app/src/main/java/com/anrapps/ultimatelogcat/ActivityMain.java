@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import com.anrapps.ultimatelogcat.adapter.AdapterLog;
 import android.support.v7.widget.Toolbar;
+import com.anrapps.ultimatelogcat.util.UIUtils;
+import com.anrapps.ultimatelogcat.util.PrefUtils;
 
 public class ActivityMain extends ActionBarActivity {
 	
@@ -22,8 +24,8 @@ public class ActivityMain extends ActionBarActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);		
 		setSupportActionBar(toolbar);
 		
-		String[] dataset = new String[20];
-		for (int i = 0; i<20; i++) {
+		String[] dataset = new String[1020];
+		for (int i = 0; i<200; i++) {
 			dataset[i] = "Item " + i;
 		}
 		
@@ -34,6 +36,9 @@ public class ActivityMain extends ActionBarActivity {
         mRecyclerView.setHasFixedSize(true);        
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
+		mRecyclerView.setOnScrollListener(new UIUtils.ScrollManager(toolbar));
+		
+		UIUtils.setToolbarTopPadding(mRecyclerView);
     }
 
 
