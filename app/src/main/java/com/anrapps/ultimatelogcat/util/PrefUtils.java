@@ -15,6 +15,10 @@ public class PrefUtils {
 		sp(c).edit().putBoolean(PREF_KEY_WIZARD_DONE, done).apply();
 	}
 	
+	public static void clearWizardDone(Context c) {
+		sp(c).edit().remove(PREF_KEY_WIZARD_DONE).apply();
+	}
+	
 	private static SharedPreferences sp(Context c) {
 		return PreferenceManager.getDefaultSharedPreferences(c);
 	}

@@ -10,6 +10,9 @@ import com.anrapps.ultimatelogcat.adapter.AdapterLog;
 import android.support.v7.widget.Toolbar;
 import com.anrapps.ultimatelogcat.util.UIUtils;
 import com.anrapps.ultimatelogcat.util.PrefUtils;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Build;
 
 public class ActivityMain extends ActionBarActivity {
 	
@@ -19,6 +22,12 @@ public class ActivityMain extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		
+		if (!PrefUtils.isWizardDone(this) && isApi16OrGreater()) {
+			ActivityWizard.start(this, true);
+			return;
+		}
+		
         setContentView(R.layout.activity_main);
 		
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);		
@@ -52,9 +61,19 @@ public class ActivityMain extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 			case R.id.action_settings:
+				PrefUtils.clearWizardDone(this);
 				return true;	
         	default: 
 				return super.onOptionsItemSelected(item);
 		}
     }
+	
+	public static void start(Activity from, boolean finish) {
+		from.startActivity(new Intent(from, ActivityMain.class));
+		if (finish) from.finish();
+	}
+	
+	private boolean isApi16OrGreater() {
+		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+	}
 }
