@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	android:gravity="center"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <!-- TODO: Create appropriate icon for each density -->
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/text_adb_steps"
+            android:drawableTop="@drawable/ic_phonelink_white"
+            android:drawablePadding="32dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:layout_margin="16dp"
+            tools:ignore="UnusedAttribute"
+            android:text="@string/text_adb_command" />
+
+    </LinearLayout>
+
+	<Button
+        android:id="@+id/fragment_wizard_done_button"
+        android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="@string/done"
+        android:layout_gravity="end|bottom" />
+
+</FrameLayout>
+

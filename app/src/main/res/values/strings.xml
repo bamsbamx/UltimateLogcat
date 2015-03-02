@@ -5,10 +5,13 @@
     <string name="action_settings">Settings</string>
 	
 	<string name="done">Done</string>
-	
+
 	<string name="text_api_level">In Android 4.1+ <i>READ_LOGS</i> permission is needed.</string>
-	<string name="text_adb_command">adb shell\npm grant com.anrapps.ultimatelogcat android.permission.READ_LOGS</string>
+    <string name="text_grant_root">Grant with root</string>
+    <string name="text_grant_adb">Grant with ADB</string>
+    <string name="text_adb_command">\"adb shell\"\n\"pm grant com.anrapps.ultimatelogcat android.permission.READ_LOGS\"</string>
 	<string name="text_adb_steps">1.Activate USB debugging option\n2.Connect to ADB\n3.Insert the following two commands</string>
+    <string name="text_root_error">An error occurred, try ADB method instead</string>
 	
 	
 </resources>

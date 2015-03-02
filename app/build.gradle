@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.anrapps.ultimatelogcat"
-        minSdkVersion 8
+        minSdkVersion 13
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -20,8 +20,9 @@ android {
 }
 
 dependencies {
-	compile 'com.android.support:cardview-v7:+'
-	compile 'com.android.support:recyclerview-v7:+'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:support-v13:21.0.3'
+    compile 'com.android.support:recyclerview-v7:21.0.3'
+    compile files('libs/RootShellv1.3.jar')
 }

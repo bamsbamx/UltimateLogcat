@@ -1,0 +1,55 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center" >
+
+        <!-- TODO: Create appropriate icon for each density -->
+        <TextView
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:text="@string/text_api_level"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:maxWidth="250dp"
+            android:drawableTop="@drawable/ic_bug_report"
+            android:drawablePadding="32dp"
+            style="?android:textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:orientation="vertical"
+        android:layout_gravity="bottom|end">
+
+        <Button
+            android:id="@+id/fragment_wizard_intro_root_button"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="@string/text_grant_root"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/fragment_wizard_intro_adb_button"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="@string/text_grant_adb"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
+</FrameLayout>
