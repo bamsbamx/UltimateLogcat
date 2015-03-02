@@ -15,3 +15,6 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-printmapping proguard_mapping.txt
+-keep class android.support.v7.** { *; }
+-keep interface android.support.v7.** { *; }
