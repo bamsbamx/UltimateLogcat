@@ -6,9 +6,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import com.anrapps.ultimatelogcat.R;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.animation.DecelerateInterpolator;
-import android.util.Log;
 import android.animation.Animator;
 import android.view.animation.AccelerateInterpolator;
 import android.animation.ObjectAnimator;
@@ -39,30 +37,30 @@ public class UIUtils {
         att.recycle();
         return (int) size;
     }
-	
+
 	public static class ScrollManager extends RecyclerView.OnScrollListener {
 		
 		private int mTotalDy = 0;
-		private Toolbar mToolbar;
+		private View mHeaderView;
 		private boolean shown = true;
 		
-		public ScrollManager(Toolbar t) {
-			this.mToolbar = t;
+		public ScrollManager(View t) {
+			this.mHeaderView = t;
 		}
 		
 		@Override
 		public void onScrolled(RecyclerView r, int dx, int dy) {
 			mTotalDy += dy;
 			if (mTotalDy == 0) {
-				setActionBarVisibility(mToolbar, true);
+				setActionBarVisibility(mHeaderView, true);
 				return;
 			}
 			
 			if (Math.abs(dy) < 5) return;
-			setActionBarVisibility(mToolbar, dy < 0);
+			setActionBarVisibility(mHeaderView, dy < 0);
 		}
 		
-		private void setActionBarVisibility(Toolbar toolbar, boolean visible) {
+		private void setActionBarVisibility(View toolbar, boolean visible) {
 			if (visible && !shown) {
 				runTranslateAnimation(toolbar, 0, new DecelerateInterpolator());
 				shown = true;

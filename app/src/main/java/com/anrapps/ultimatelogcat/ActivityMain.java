@@ -13,6 +13,7 @@ import com.anrapps.ultimatelogcat.util.PrefUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
+import android.view.View;
 
 public class ActivityMain extends ActionBarActivity {
 	
@@ -29,7 +30,8 @@ public class ActivityMain extends ActionBarActivity {
 		}
 		
         setContentView(R.layout.activity_main);
-		
+
+        View toolbarContainer = findViewById(R.id.toolbar_actionbar_container);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);		
 		setSupportActionBar(toolbar);
 		
@@ -45,8 +47,8 @@ public class ActivityMain extends ActionBarActivity {
         mRecyclerView.setHasFixedSize(true);        
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
-		mRecyclerView.setOnScrollListener(new UIUtils.ScrollManager(toolbar));
-		
+		mRecyclerView.setOnScrollListener(new UIUtils.ScrollManager(toolbarContainer != null ?
+                toolbarContainer : toolbar));
 		UIUtils.setToolbarTopPadding(mRecyclerView);
     }
 
