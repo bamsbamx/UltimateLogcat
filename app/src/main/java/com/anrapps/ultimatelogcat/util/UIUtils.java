@@ -40,7 +40,6 @@ public class UIUtils {
 
 	public static class ScrollManager extends RecyclerView.OnScrollListener {
 		
-		private int mTotalDy = 0;
 		private View mHeaderView;
 		private boolean shown = true;
 		
@@ -50,8 +49,7 @@ public class UIUtils {
 		
 		@Override
 		public void onScrolled(RecyclerView r, int dx, int dy) {
-			mTotalDy += dy;
-			if (mTotalDy == 0) {
+			if (!r.canScrollVertically(-1)) {
 				setActionBarVisibility(mHeaderView, true);
 				return;
 			}
