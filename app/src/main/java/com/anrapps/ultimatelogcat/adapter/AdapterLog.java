@@ -15,13 +15,13 @@ public class AdapterLog extends RecyclerView.Adapter<AdapterLog.ViewHolder> {
     private final List<Log> mLogList;
 
     public AdapterLog() {
-        this.mLogList = new ArrayList<Log>();
+        this.mLogList = new ArrayList<>();
     }
 
     @Override
     public AdapterLog.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        TextView v = (TextView) LayoutInflater.from(parent.getContext())
-			.inflate(android.R.layout.simple_list_item_1, parent, false);
+        View v = LayoutInflater.from(parent.getContext())
+			.inflate(R.layout.listitem_log, parent, false);
         return new ViewHolder(v);
     }
 
@@ -40,14 +40,14 @@ public class AdapterLog extends RecyclerView.Adapter<AdapterLog.ViewHolder> {
 		return mLogList.get(position);
 	}
 	
-	public void add(Log log) {
-		mLogList.add(log);
-		notifyDataSetChanged();
-	}
-	
-	public void removeFirstItems(int count) {
+	public void addAll(int previousCount, List<Log> logList) {
+        mLogList.addAll(logList);
+        notifyItemRangeInserted(previousCount + 1, logList.size());
+    }
+
+    public void removeFirstItems(int count) {
 		for (int i=0; i<count; i++) mLogList.remove(0);
-		notifyDataSetChanged();
+		notifyItemRangeRemoved(0, count);
 	}
 	
 	public void clear() {
@@ -57,9 +57,9 @@ public class AdapterLog extends RecyclerView.Adapter<AdapterLog.ViewHolder> {
 	
 	public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView mTextView;
-        public ViewHolder(TextView v) {
+        public ViewHolder(View v) {
             super(v);
-            mTextView = v;
+            mTextView = (TextView) v.findViewById(R.id.listitem_log_textview);
         }
     }
 }

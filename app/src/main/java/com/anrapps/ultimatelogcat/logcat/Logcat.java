@@ -8,16 +8,15 @@ import java.util.ArrayList;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import android.os.AsyncTask;
 
-/*
+/**
 *	Usage: Must create an instance of Logcat via its constructor which requires a Handler. After
 *	calling start method a new task will be started. This task will start a proccess using 'logcat' command.
-*	Each some time (@see CAT_DELAY) the task will save output lines into a cache and sends the new lines to the 
+*	Each some time (@see CAT_DELAY) the task will save output lines into a cache and sends the new lines to the
 *	provided handler with the message @see CAT_LOGS. Also it will remove some logs if there are too much of them
 *	this way it will send empty message with @see CLEAR_LOGS.
 *
@@ -32,7 +31,7 @@ public class Logcat {
     public static final int CLEAR_LOGS = 2;
 	public static final int REMOVE_LOGS = 3;
 	//in milliseconds
-	public static final int CLEAR_PERIOD = 20000;
+	public static final int CLEAR_PERIOD = 1050;
 
     private final Handler mHandler;
 	private LogParser mLogParser;
@@ -44,7 +43,7 @@ public class Logcat {
     private long lastCat = -1;
 	private long lastClear = - 1;
 
-    private final ArrayList<Log> mLogCache = new ArrayList<Log>();
+    private final ArrayList<Log> mLogCache = new ArrayList<>();
 	private LogcatTask mLogcatTask;
     
     private Runnable catRunner = new Runnable() {
@@ -70,7 +69,7 @@ public class Logcat {
         }
     };
 
-	/*
+	/**
 	*	Default constructor. Used to initialize a Logcat object
 	*
 	*	@param handler Handler which will receive log lines
@@ -86,7 +85,7 @@ public class Logcat {
 		this.mLogBuffer = buffer;
     }
 	
-	/*
+	/**
 	*	Starts the task which will receive the logs and will send them via the 
 	*	provided Handler in the constructor. Also be sure to call stop when not needed (e.g.onPause())
 	*
@@ -99,10 +98,10 @@ public class Logcat {
 		mLogcatTask.execute();
 	}
 	
-	/*
+	/**
 	*	Stops the task started when called start()
 	*
-	*	[ I wont do nothing if not running ]
+	*	[ It wont do nothing if not running ]
 	*/
     public void stop() {
         if (!isRunning()) return;
@@ -110,7 +109,7 @@ public class Logcat {
 			mLogcatTask.cancel();
     }
 
-	/*
+	/**
 	*	Sets the minimum log level for the output logs. This will restart the task so the old logs will be
 	*	filtered as well
 	*
@@ -126,12 +125,10 @@ public class Logcat {
 					}
 			});
 			stop();
-		}else{
-//			start();
 		}
 	}
 
-	/*
+	/**
 	 *	Sets a search filter for the output logs. This will restart the task so the old logs will be 
 	 *	filtered as well
 	 *
@@ -147,8 +144,6 @@ public class Logcat {
                 }
             });
             stop();
-        }else{
-//            start();
         }
     }
 	
@@ -166,7 +161,7 @@ public class Logcat {
 			super.onPreExecute();
 			
 			// logcat -v brief -b main -b system *:V
-			aLogCommands = new ArrayList<String>();
+			aLogCommands = new ArrayList<>();
 			aLogCommands.add("logcat");
 			aLogCommands.add("-v");
 			aLogCommands.add(mLogFormat.getTitle());
@@ -185,7 +180,7 @@ public class Logcat {
 		protected Void doInBackground(Void[] p1) {
 			try {
 				aProcess = Runtime.getRuntime()
-                    .exec(aLogCommands.toArray(new String[0]));
+                    .exec(aLogCommands.toArray(new String[aLogCommands.size()]));
 				aReader = new BufferedReader(new InputStreamReader(
 												aProcess.getInputStream()), 1024);
 
@@ -240,15 +235,13 @@ public class Logcat {
 		
 	}
 	
-	/*
+	/**
 	 *	Show whether the task is running or not
 	 *
-	 *	@returns true if running, false otherwise
+	 *	@return true if running, false otherwise
 	 */
 	public boolean isRunning(){
-		return mLogcatTask == null ?
-			false :
-			mLogcatTask.getStatus().equals(AsyncTask.Status.RUNNING);
+		return mLogcatTask != null && mLogcatTask.getStatus().equals(AsyncTask.Status.RUNNING);
 	}
 	
 	private interface OnTaskFinishedListener{

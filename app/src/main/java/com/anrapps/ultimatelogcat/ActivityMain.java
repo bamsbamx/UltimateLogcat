@@ -10,15 +10,20 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+
 import com.anrapps.ultimatelogcat.adapter.AdapterLog;
 import com.anrapps.ultimatelogcat.logcat.Log;
 import com.anrapps.ultimatelogcat.logcat.Logcat;
 import com.anrapps.ultimatelogcat.util.PrefUtils;
 import com.anrapps.ultimatelogcat.util.UIUtils;
+
 import java.util.List;
+
 import com.anrapps.ultimatelogcat.logcat.Level;
 import com.anrapps.ultimatelogcat.logcat.Buffer;
 import com.anrapps.ultimatelogcat.logcat.Format;
@@ -26,7 +31,7 @@ import com.anrapps.ultimatelogcat.logcat.Format;
 public class ActivityMain extends ActionBarActivity {
 	
 	public static final int MAX_LOG_ITEMS = 500;
-	
+
 	private RecyclerView mRecyclerView;
     private AdapterLog mRecyclerAdapter;
 	private boolean mAutoScroll = true;
@@ -40,11 +45,13 @@ public class ActivityMain extends ActionBarActivity {
                     updateLogs(catLogs);
                     break;
                 case Logcat.CLEAR_LOGS:
-					if (mRecyclerAdapter.getItemCount() > MAX_LOG_ITEMS)
+                    if (!mRecyclerView.canScrollVertically(-1)) return;
+                    if (mRecyclerAdapter.getItemCount() > MAX_LOG_ITEMS)
                     	mRecyclerAdapter.removeFirstItems(mRecyclerAdapter.getItemCount() - MAX_LOG_ITEMS);
                     break;
 				case Logcat.REMOVE_LOGS:
 					mRecyclerAdapter.clear();
+                    break;
             }
 		}
 		
@@ -65,18 +72,28 @@ public class ActivityMain extends ActionBarActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);		
 		setSupportActionBar(toolbar);
 		
-		final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+		final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
 		mRecyclerAdapter = new AdapterLog();
-		
+
 		mRecyclerView = (RecyclerView) findViewById(R.id.activity_main_recyclerview);
         mRecyclerView.setHasFixedSize(true);        
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mRecyclerAdapter);
-		mRecyclerView.setOnScrollListener(new UIUtils.ScrollManager(toolbarContainer != null ?
-                toolbarContainer : toolbar){
+        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP)
+                    if (mRecyclerView.canScrollVertically(1)) mAutoScroll = false;
+                return false;
+            }
+        });
+		mRecyclerView.setOnScrollListener(new UIUtils.ScrollManager(
+                toolbarContainer != null ? toolbarContainer : toolbar){
 				@Override public void onScrolled(RecyclerView r, int dx, int dy) {
-					mAutoScroll = !r.canScrollVertically(1);
-					}
+                    super.onScrolled(r, dx, dy);
+                    if (!r.canScrollVertically(1)) mAutoScroll = true;
+                }
 				});
 		UIUtils.setToolbarTopPadding(mRecyclerView);
     }
@@ -105,14 +122,28 @@ public class ActivityMain extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 			case R.id.action_settings:
-				android.util.Log.wtf("TAG", "Autoscroll menu: " + mAutoScroll);
-				return true;	
-        	default: 
+				return true;
+        	default:
 				return super.onOptionsItemSelected(item);
 		}
     }
-	
-	public static void start(Activity from, boolean finish) {
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch(keyCode){
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                mAutoScroll = false;
+                mRecyclerView.scrollToPosition(mRecyclerAdapter.getItemCount() -1);
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                mAutoScroll = true;
+                mRecyclerView.scrollToPosition(mRecyclerAdapter.getItemCount() -1);
+                return true;
+        }
+        return false;
+    }
+
+    public static void start(Activity from, boolean finish) {
 		from.startActivity(new Intent(from, ActivityMain.class));
 		if (finish) from.finish();
 	}
@@ -121,17 +152,11 @@ public class ActivityMain extends ActionBarActivity {
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
 	}
 	
-	private void updateLogs(final List<Log> logList){
-		for (Log log : logList){
-			mRecyclerAdapter.add(log);	
-			
-			if (mAutoScroll) 
-				mRecyclerView.smoothScrollToPosition(mRecyclerAdapter.getItemCount() - 1);
-				//mListView.smoothScrollToPosition(mListAdapter.getCount() - 1);			
-		}
-        //mColorAnimator.startInterpolation(750, 25, mLastActionBarColor, logList.get(logList.size()-1).getLevel().getColor());
+	private void updateLogs(final List<Log> logList) {
+        final boolean scroll = mAutoScroll;
+        int currentSize = mRecyclerAdapter.getItemCount();
+        mRecyclerAdapter.addAll(currentSize, logList);
+        if (scroll) mRecyclerView.smoothScrollToPosition(mRecyclerAdapter.getItemCount() - 1);
+    }
 
-		//if (mAutoScroll && logList.size() > 100) mListView.setSelection(mListAdapter.getCount() -1);
-	}
-	
 }
