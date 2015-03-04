@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +21,7 @@ import com.anrapps.ultimatelogcat.logcat.Logcat;
 import com.anrapps.ultimatelogcat.util.PrefUtils;
 import com.anrapps.ultimatelogcat.util.UIUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.anrapps.ultimatelogcat.logcat.Level;
@@ -35,37 +35,17 @@ public class ActivityMain extends ActionBarActivity {
 	private RecyclerView mRecyclerView;
     private AdapterLog mRecyclerAdapter;
 	private boolean mAutoScroll = true;
-	
-	private Logcat mLogcat;
-	private Handler mLogHandler = new Handler() {
-		@Override public void handleMessage(Message msg) {
-			switch (msg.what){
-                case Logcat.CAT_LOGS:
-                    List<Log> catLogs = (List<Log>) msg.obj;
-                    updateLogs(catLogs);
-                    break;
-                case Logcat.CLEAR_LOGS:
-                    if (!mRecyclerView.canScrollVertically(-1)) return;
-                    if (mRecyclerAdapter.getItemCount() > MAX_LOG_ITEMS)
-                    	mRecyclerAdapter.removeFirstItems(mRecyclerAdapter.getItemCount() - MAX_LOG_ITEMS);
-                    break;
-				case Logcat.REMOVE_LOGS:
-					mRecyclerAdapter.clear();
-                    break;
-            }
-		}
-		
-	};
 
+	private Logcat mLogcat;
+    private Handler mLogHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-		
 		if (!PrefUtils.isWizardDone(this) && isApi16OrGreater()) {
 			ActivityWizard.start(this, true);
 			return;
 		}
-		
+
         setContentView(R.layout.activity_main);
 
         View toolbarContainer = findViewById(R.id.toolbar_actionbar_container);
@@ -102,14 +82,16 @@ public class ActivityMain extends ActionBarActivity {
 	protected void onResume() {
 		super.onResume();
 		//TODO: Get level, buffer, etc from PrefUtils
-		if (mLogcat == null) mLogcat = new Logcat(mLogHandler, Level.V, Format.BRIEF, Buffer.MAIN);
+        if (mLogHandler == null) mLogHandler = new Handler(this);
+        if (mLogcat == null) mLogcat = new Logcat(mLogHandler, Level.V, Format.BRIEF, Buffer.MAIN);
 		mLogcat.start();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (mLogcat != null) mLogcat.stop();
+        mLogHandler = null;
+        if (mLogcat != null) mLogcat.stop();
 	}
 	
     @Override
@@ -157,6 +139,37 @@ public class ActivityMain extends ActionBarActivity {
         int currentSize = mRecyclerAdapter.getItemCount();
         mRecyclerAdapter.addAll(currentSize, logList);
         if (scroll) mRecyclerView.smoothScrollToPosition(mRecyclerAdapter.getItemCount() - 1);
+    }
+
+    private static class Handler extends android.os.Handler {
+
+        private final WeakReference<ActivityMain> mActivity;
+
+        public Handler(ActivityMain activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            ActivityMain activity = mActivity.get();
+            if (activity == null) return;
+            switch (msg.what){
+                case Logcat.CAT_LOGS:
+                    List<Log> catLogs = (List<Log>) msg.obj;
+                    activity.updateLogs(catLogs);
+                    break;
+                case Logcat.CLEAR_LOGS:
+                    if (!activity.mRecyclerView.canScrollVertically(-1)) return;
+                    if (activity.mRecyclerAdapter.getItemCount() > MAX_LOG_ITEMS)
+                        activity.mRecyclerAdapter.removeFirstItems(
+                                activity.mRecyclerAdapter.getItemCount() - MAX_LOG_ITEMS);
+                    break;
+                case Logcat.REMOVE_LOGS:
+                    activity.mRecyclerAdapter.clear();
+                    break;
+            }
+        }
+
     }
 
 }
