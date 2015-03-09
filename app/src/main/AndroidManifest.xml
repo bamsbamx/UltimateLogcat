@@ -22,6 +22,11 @@
 			android:name=".ActivityWizard"
 			android:label="" 
 			android:theme="@style/AppTheme.Dark"/>
+        <activity
+            android:name=".ActivitySettings"
+            android:label="@string/label_settings"
+            android:theme="@style/AppTheme" />
+
     </application>
 
 </manifest>

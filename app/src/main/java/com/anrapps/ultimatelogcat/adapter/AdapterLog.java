@@ -1,5 +1,6 @@
 package com.anrapps.ultimatelogcat.adapter;
 
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 import android.view.View;
@@ -8,6 +9,8 @@ import com.anrapps.ultimatelogcat.R;
 import android.widget.TextView;
 import java.util.List;
 import com.anrapps.ultimatelogcat.logcat.Log;
+import com.anrapps.ultimatelogcat.util.PrefUtils;
+
 import java.util.ArrayList;
 
 public class AdapterLog extends RecyclerView.Adapter<AdapterLog.ViewHolder> {
@@ -22,7 +25,11 @@ public class AdapterLog extends RecyclerView.Adapter<AdapterLog.ViewHolder> {
     public AdapterLog.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
 			.inflate(R.layout.listitem_log, parent, false);
-        return new ViewHolder(v);
+        ViewHolder vh = new ViewHolder(v);
+        vh.mTextView.setTextSize(PrefUtils.getTextSize(parent.getContext()));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            vh.mTextView.setTypeface(PrefUtils.getTextFont(parent.getContext()));
+        return vh;
     }
 
     @Override

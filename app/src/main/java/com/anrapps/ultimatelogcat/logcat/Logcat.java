@@ -70,26 +70,25 @@ public class Logcat {
     };
 
 	/**
-	*	Default constructor. Used to initialize a Logcat object
+	*	Default constructor. Used to initialize a Logcat object. Default values for Level(V), Format(BRIEF) and
+    *   Buffer(MAIN) will be used, use {@link #setFormat(Format)}, {@link #setFormat(Format)} or
+        {@link #setBuffer(Buffer)} in order to change them
 	*
 	*	@param handler Handler which will receive log lines
-	*	@param level The minimum log level the Logcat will output
-	*	@param format The selected format for the logs
-	*	@param buffer The selected buffer for the logs
 	*/
-    public Logcat(Handler handler, Level level, Format format, Buffer buffer) {
+    public Logcat(Handler handler) {
         mHandler = handler;
-		this.mLogParser = new LogParser(format);
-		this.mLogLevel = level;
-		this.mLogFormat = format;
-		this.mLogBuffer = buffer;
+		this.mLogParser = new LogParser(Format.BRIEF);
+		this.mLogLevel = Level.V;
+		this.mLogFormat = Format.BRIEF;
+		this.mLogBuffer = Buffer.MAIN;
     }
 	
 	/**
 	*	Starts the task which will receive the logs and will send them via the 
 	*	provided Handler in the constructor. Also be sure to call stop when not needed (e.g.onPause())
 	*
-	*	[ I wont do nothing if already running ]
+	*	<i>It wont do nothing if not running</i>
 	*/
 	public void start(){ 
 		if (isRunning()) return;
@@ -101,7 +100,7 @@ public class Logcat {
 	/**
 	*	Stops the task started when called start()
 	*
-	*	[ It wont do nothing if not running ]
+	*	<i>It wont do nothing if not running</i>
 	*/
     public void stop() {
         if (!isRunning()) return;
@@ -119,14 +118,50 @@ public class Logcat {
 		this.mLogLevel = level;
 		if (isRunning()){ 
 			mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener(){
-					@Override
-					public void onTaskFinished() {
-						start();
-					}
+                @Override
+                public void onTaskFinished() {
+                    start();
+                }
 			});
 			stop();
 		}
 	}
+
+    /**
+     *	Sets the log output format
+     *
+     *	@param format The desired format
+     */
+    public void setFormat(Format format) {
+        this.mLogFormat = format;
+        if (isRunning()) {
+            mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
+                @Override
+                public void onTaskFinished() {
+                    start();
+                }
+            });
+            stop();
+        }
+    }
+
+    /**
+     *	Sets the buffer which will be used for reading logs
+     *
+     *	@param buffer The desired buffer
+     */
+    public void setBuffer(Buffer buffer) {
+        this.mLogBuffer = buffer;
+        if (isRunning()) {
+            mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
+                @Override
+                public void onTaskFinished() {
+                    start();
+                }
+            });
+            stop();
+        }
+    }
 
 	/**
 	 *	Sets a search filter for the output logs. This will restart the task so the old logs will be 

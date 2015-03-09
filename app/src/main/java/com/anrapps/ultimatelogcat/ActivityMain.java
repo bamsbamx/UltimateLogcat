@@ -25,8 +25,6 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.anrapps.ultimatelogcat.logcat.Level;
-import com.anrapps.ultimatelogcat.logcat.Buffer;
-import com.anrapps.ultimatelogcat.logcat.Format;
 
 public class ActivityMain extends ActionBarActivity {
 	
@@ -81,10 +79,13 @@ public class ActivityMain extends ActionBarActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		//TODO: Get level, buffer, etc from PrefUtils
         if (mLogHandler == null) mLogHandler = new Handler(this);
-        if (mLogcat == null) mLogcat = new Logcat(mLogHandler, Level.V, Format.BRIEF, Buffer.MAIN);
-		mLogcat.start();
+        if (mLogcat == null) mLogcat = new Logcat(mLogHandler);
+        //TODO: Get level from PrefUtils
+        mLogcat.setLevel(Level.V);
+        mLogcat.setFormat(PrefUtils.getFormat(this));
+        mLogcat.setBuffer(PrefUtils.getBuffer(this));
+        mLogcat.start();
 	}
 
 	@Override
@@ -104,6 +105,7 @@ public class ActivityMain extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 			case R.id.action_settings:
+                ActivitySettings.start(this, false);
 				return true;
         	default:
 				return super.onOptionsItemSelected(item);

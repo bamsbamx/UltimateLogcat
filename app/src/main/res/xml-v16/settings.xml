@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/preference_category_log" >
+
+        <ListPreference
+            android:key="preference_log_format"
+            android:title="@string/preference_title_log_format"
+            android:defaultValue="BRIEF"
+            android:entries="@array/log_formats"
+            android:entryValues="@array/preference_log_format_values" />
+
+        <ListPreference
+            android:key="preference_log_buffer"
+            android:title="@string/preference_title_log_buffer"
+            android:defaultValue="MAIN"
+            android:entries="@array/log_buffers"
+            android:entryValues="@array/preference_log_buffer_values" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/preference_category_interface" >
+
+        <ListPreference
+            android:key="preference_text_size"
+            android:title="@string/preference_title_text_size"
+            android:defaultValue="12"
+            android:entries="@array/text_sizes"
+            android:entryValues="@array/preference_text_size_values" />
+
+        <ListPreference
+            android:key="preference_text_font"
+            android:title="@string/preference_title_text_font"
+            android:defaultValue="0"
+            android:entries="@array/text_fonts"
+            android:entryValues="@array/preference_text_font_values" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/preference_category_crash_finder" >
+
+        <CheckBoxPreference
+            android:key="preference_crash_finder_vibrate"
+            android:title="@string/preference_title_crash_finder_vibrate"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="preference_crash_finder_sound"
+            android:title="@string/preference_title_crash_finder_sound"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
