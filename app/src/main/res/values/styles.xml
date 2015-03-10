@@ -28,4 +28,10 @@
 		
 	<style name="AppTheme.Dark" parent="AppTheme.Base.Dark" />
 
+    <style name="HeaderBar.Spinner" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:dropDownSelector">?android:selectableItemBackground</item>
+        <item name="android:divider">@null</item>
+    </style>
+
 </resources>

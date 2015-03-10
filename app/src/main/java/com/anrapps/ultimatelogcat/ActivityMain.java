@@ -5,15 +5,22 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.anrapps.ultimatelogcat.adapter.AdapterLog;
 import com.anrapps.ultimatelogcat.logcat.Log;
@@ -26,7 +33,7 @@ import java.util.List;
 
 import com.anrapps.ultimatelogcat.logcat.Level;
 
-public class ActivityMain extends ActionBarActivity {
+public class ActivityMain extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 	
 	public static final int MAX_LOG_ITEMS = 500;
 
@@ -36,6 +43,8 @@ public class ActivityMain extends ActionBarActivity {
 
 	private Logcat mLogcat;
     private Handler mLogHandler;
+
+    private boolean mToolbarSpinnerSelected = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +58,23 @@ public class ActivityMain extends ActionBarActivity {
         View toolbarContainer = findViewById(R.id.toolbar_actionbar_container);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);		
 		setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
+                getSupportActionBar().getThemedContext(),
+                R.array.log_levels,
+                R.layout.toolbar_spinner_item);
+        spinnerAdapter.setDropDownViewResource(R.layout.toolbar_spinner_item_dropdown);
+
+        View spinnerContainer = LayoutInflater.from(this).inflate(R.layout.toolbar_spinner,
+                toolbar, false);
+        toolbar.addView(spinnerContainer, new ActionBar.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        Spinner spinner = (Spinner) spinnerContainer.findViewById(R.id.actionbar_spinner);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setSelection(PrefUtils.getLevel(this).ordinal());
+        spinner.setOnItemSelectedListener(this);
 		
 		final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
@@ -66,13 +92,13 @@ public class ActivityMain extends ActionBarActivity {
                 return false;
             }
         });
-		mRecyclerView.setOnScrollListener(new UIUtils.ScrollManager(
-                toolbarContainer != null ? toolbarContainer : toolbar){
+        mRecyclerView.setOnScrollListener(new UIUtils.ScrollManager(
+            toolbarContainer != null ? toolbarContainer : toolbar) {
 				@Override public void onScrolled(RecyclerView r, int dx, int dy) {
                     super.onScrolled(r, dx, dy);
                     if (!r.canScrollVertically(1)) mAutoScroll = true;
                 }
-				});
+            });
 		UIUtils.setToolbarTopPadding(mRecyclerView);
     }
 
@@ -80,11 +106,11 @@ public class ActivityMain extends ActionBarActivity {
 	protected void onResume() {
 		super.onResume();
         if (mLogHandler == null) mLogHandler = new Handler(this);
-        if (mLogcat == null) mLogcat = new Logcat(mLogHandler);
-        //TODO: Get level from PrefUtils
-        mLogcat.setLevel(Level.V);
-        mLogcat.setFormat(PrefUtils.getFormat(this));
-        mLogcat.setBuffer(PrefUtils.getBuffer(this));
+        if (mLogcat == null) mLogcat = new Logcat(
+                mLogHandler,
+                PrefUtils.getLevel(this),
+                PrefUtils.getFormat(this),
+                PrefUtils.getBuffer(this));
         mLogcat.start();
 	}
 
@@ -126,6 +152,21 @@ public class ActivityMain extends ActionBarActivity {
         }
         return false;
     }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (!mToolbarSpinnerSelected) {
+            mToolbarSpinnerSelected = true;
+            return;
+        }
+        final Level level = Level.get(position);
+        PrefUtils.setLevel(this, level);
+        mLogcat.setLevel(level);
+        Toast.makeText(this, "OnItemSelected: " + position, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     public static void start(Activity from, boolean finish) {
 		from.startActivity(new Intent(from, ActivityMain.class));

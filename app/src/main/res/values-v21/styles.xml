@@ -11,4 +11,11 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
 	</style>
 
+    <style name="HeaderBar.Spinner" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:dropDownSelector">?android:selectableItemBackground</item>
+        <item name="android:divider">@null</item>
+        <item name="android:overlapAnchor">true</item>
+    </style>
+
 </resources>

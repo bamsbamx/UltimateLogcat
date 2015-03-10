@@ -69,19 +69,20 @@ public class Logcat {
         }
     };
 
-	/**
-	*	Default constructor. Used to initialize a Logcat object. Default values for Level(V), Format(BRIEF) and
-    *   Buffer(MAIN) will be used, use {@link #setFormat(Format)}, {@link #setFormat(Format)} or
-        {@link #setBuffer(Buffer)} in order to change them
-	*
-	*	@param handler Handler which will receive log lines
-	*/
-    public Logcat(Handler handler) {
+    /**
+     *	Default constructor. Used to initialize a Logcat object
+     *
+     *	@param handler Handler which will receive log lines
+     *	@param level The minimum log level the Logcat will output
+     *	@param format The selected format for the logs
+     *	@param buffer The selected buffer for the logs
+     */
+    public Logcat(Handler handler, Level level, Format format, Buffer buffer) {
         mHandler = handler;
-		this.mLogParser = new LogParser(Format.BRIEF);
-		this.mLogLevel = Level.V;
-		this.mLogFormat = Format.BRIEF;
-		this.mLogBuffer = Buffer.MAIN;
+        this.mLogParser = new LogParser(format);
+        this.mLogLevel = level;
+        this.mLogFormat = format;
+        this.mLogBuffer = buffer;
     }
 	
 	/**
@@ -104,8 +105,8 @@ public class Logcat {
 	*/
     public void stop() {
         if (!isRunning()) return;
-		if (mLogcatTask != null && !mLogcatTask.isCancelled())
-			mLogcatTask.cancel();
+        if (mLogcatTask != null && !mLogcatTask.isCancelled())
+            mLogcatTask.cancel();
     }
 
 	/**
@@ -116,7 +117,7 @@ public class Logcat {
 	*/
 	public void setLevel(Level level){
 		this.mLogLevel = level;
-		if (isRunning()){ 
+        if (isRunning()){
 			mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener(){
                 @Override
                 public void onTaskFinished() {
@@ -234,7 +235,7 @@ public class Logcat {
 				}
 			} catch (IOException e) {
 				android.util.Log.e("UltimateLogcat", "Error reading log => ", e);
-			}		
+			}
 			return null;
 		}
 
@@ -276,11 +277,11 @@ public class Logcat {
 	 *	@return true if running, false otherwise
 	 */
 	public boolean isRunning(){
-		return mLogcatTask != null && mLogcatTask.getStatus().equals(AsyncTask.Status.RUNNING);
+		return mLogcatTask != null && mLogcatTask.getStatus().equals(AsyncTask.Status.RUNNING) && !mLogcatTask.isCancelled();
 	}
-	
+
 	private interface OnTaskFinishedListener{
-		public void onTaskFinished();
+		void onTaskFinished();
 	}
 }
 

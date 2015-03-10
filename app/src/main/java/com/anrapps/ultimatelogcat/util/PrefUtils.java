@@ -32,13 +32,12 @@ public class PrefUtils {
 		sp(c).edit().putBoolean(PREF_KEY_WIZARD_DONE, done).apply();
 	}
 	
-	public static void clearWizardDone(Context c) {
-		sp(c).edit().remove(PREF_KEY_WIZARD_DONE).apply();
-	}
-
-    //TODO:
-    public static Level getLevel(Context c){
+	public static Level getLevel(Context c){
         return Level.valueOf(sp(c).getString(PREF_KEY_LOG_LEVEL, Level.V.toString()));
+    }
+
+    public static void setLevel(Context c, Level level) {
+        spe(c).putString(PREF_KEY_LOG_LEVEL, level.toString()).apply();
     }
 
     public static Format getFormat(Context c){
@@ -54,12 +53,10 @@ public class PrefUtils {
         return sp(c).getString(PREF_KEY_SEARCH_FILTER, "");
     }
 
-    //TODO: CHange text size
     public static float getTextSize(Context c){
         return Float.parseFloat(sp(c).getString(PREFERENCE_KEY_TEXT_SIZE, "12"));
     }
 
-    //TODO:
     public static Typeface getTextFont(Context c){
         int index = Integer.parseInt(sp(c).getString(PREFERENCE_KEY_TEXT_FONT, "0"));
         switch (index){
@@ -83,4 +80,8 @@ public class PrefUtils {
 	public static SharedPreferences sp(Context c) {
 		return PreferenceManager.getDefaultSharedPreferences(c);
 	}
+
+    public static SharedPreferences.Editor spe(Context c) {
+        return PreferenceManager.getDefaultSharedPreferences(c).edit();
+    }
 }
