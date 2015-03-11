@@ -254,7 +254,7 @@ public class Logcat {
 					}
 				}
 			} catch (IOException e) {
-				android.util.Log.e("UltimateLogcat", "Error reading log => ", e);
+				android.util.Log.w("UltimateLogcat", "Error reading log => Buffer may be closed");
 			}
 			return null;
 		}
