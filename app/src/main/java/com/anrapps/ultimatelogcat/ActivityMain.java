@@ -1,5 +1,8 @@
 package com.anrapps.ultimatelogcat;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
@@ -11,13 +14,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
@@ -39,7 +42,8 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
 	
 	public static final int MAX_LOG_ITEMS = 500;
 
-	private RecyclerView mRecyclerView;
+    private Toolbar mToolbar;
+    private RecyclerView mRecyclerView;
     private AdapterLog mRecyclerAdapter;
 	private boolean mAutoScroll = true;
 
@@ -47,6 +51,8 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
     private Handler mLogHandler;
 
     private boolean mToolbarSpinnerSelected = false;
+    private int mToolbarColor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +64,8 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
 
         View toolbarContainer = findViewById(R.id.toolbar_actionbar_container);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);		
-		setSupportActionBar(toolbar);
+		mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+		setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
@@ -69,8 +75,8 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
         spinnerAdapter.setDropDownViewResource(R.layout.toolbar_spinner_item_dropdown);
 
         View spinnerContainer = LayoutInflater.from(this).inflate(R.layout.toolbar_spinner,
-                toolbar, false);
-        toolbar.addView(spinnerContainer, new ActionBar.LayoutParams(
+                mToolbar, false);
+        mToolbar.addView(spinnerContainer, new ActionBar.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         Spinner spinner = (Spinner) spinnerContainer.findViewById(R.id.actionbar_spinner);
@@ -95,12 +101,16 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
             }
         });
         mRecyclerView.setOnScrollListener(new UIUtils.ScrollManager(
-            toolbarContainer != null ? toolbarContainer : toolbar) {
-				@Override public void onScrolled(RecyclerView r, int dx, int dy) {
-                    super.onScrolled(r, dx, dy);
-                    if (!r.canScrollVertically(1)) mAutoScroll = true;
-                }
-            });
+                toolbarContainer != null ? toolbarContainer : mToolbar) {
+            @Override
+            public void onScrolled(RecyclerView r, int dx, int dy) {
+                super.onScrolled(r, dx, dy);
+                if (!r.canScrollVertically(1)) mAutoScroll = true;
+            }
+        });
+
+        mToolbarColor = PrefUtils.getLevel(this).getColor();
+        mToolbar.setBackgroundColor(mToolbarColor);
 		UIUtils.setToolbarTopPadding(mRecyclerView);
     }
 
@@ -177,21 +187,6 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
 		}
     }
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        switch(keyCode){
-//            case KeyEvent.KEYCODE_VOLUME_UP:
-//                mAutoScroll = false;
-//                mRecyclerView.scrollToPosition(mRecyclerAdapter.getItemCount() -1);
-//                return true;
-//            case KeyEvent.KEYCODE_VOLUME_DOWN:
-//                mAutoScroll = true;
-//                mRecyclerView.scrollToPosition(mRecyclerAdapter.getItemCount() -1);
-//                return true;
-//        }
-//        return false;
-//    }
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (!mToolbarSpinnerSelected) {
@@ -201,6 +196,7 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
         final Level level = Level.get(position);
         PrefUtils.setLevel(this, level);
         mLogcat.setLevel(level);
+        changeToolbarBackgroundColor(level.getColor());
         Toast.makeText(this, "OnItemSelected: " + position, Toast.LENGTH_SHORT).show();
     }
 
@@ -215,8 +211,29 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
 	private boolean isApi16OrGreater() {
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
 	}
-	
-	private void updateLogs(final List<Log> logList) {
+
+    private void changeToolbarBackgroundColor(final int toColor) {
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), mToolbarColor, toColor);
+        colorAnimation.setDuration(300);
+        colorAnimation.setInterpolator(new AccelerateInterpolator());
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                mToolbar.setBackgroundColor((Integer) animator.getAnimatedValue());
+            }
+        });
+        colorAnimation.addListener(new Animator.AnimatorListener() {
+            @Override public void onAnimationStart(Animator animation) {}
+            @Override public void onAnimationCancel(Animator animation) {}
+            @Override public void onAnimationRepeat(Animator animation) {}
+            @Override public void onAnimationEnd(Animator animation) {
+                mToolbarColor = toColor;
+            }
+        });
+        colorAnimation.start();
+    }
+
+    private void updateLogs(final List<Log> logList) {
         final boolean scroll = mAutoScroll;
         int currentSize = mRecyclerAdapter.getItemCount();
         mRecyclerAdapter.addAll(currentSize, logList);
