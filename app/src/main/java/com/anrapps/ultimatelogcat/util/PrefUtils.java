@@ -3,6 +3,7 @@ import android.content.SharedPreferences;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import com.anrapps.ultimatelogcat.logcat.Buffer;
 import com.anrapps.ultimatelogcat.logcat.Format;
@@ -22,7 +23,7 @@ public class PrefUtils {
 
 	private static final String PREF_KEY_WIZARD_DONE = "pref_wizard_done";
     private static final String PREF_KEY_LOG_LEVEL = "pref_log_level";
-    private static final String PREF_KEY_SEARCH_FILTER = "pref_log_level";
+    private static final String PREF_KEY_SEARCH_FILTER = "pref_log_filter";
 
     public static boolean isWizardDone(Context c) {
 		return sp(c).getBoolean(PREF_KEY_WIZARD_DONE, false);
@@ -48,9 +49,17 @@ public class PrefUtils {
         return Buffer.valueOf(sp(c).getString(PREFERENCE_KEY_LOG_BUFFER, Buffer.MAIN.toString()));
     }
 
-    //TODO:
     public static String getSearchFilter(Context c) {
         return sp(c).getString(PREF_KEY_SEARCH_FILTER, "");
+    }
+
+    public static void setSearchFilter(Context c, String filter) {
+        if (TextUtils.isEmpty(filter)) removeSearchFilter(c);
+        else spe(c).putString(PREF_KEY_SEARCH_FILTER, filter).apply();
+    }
+
+    public static void removeSearchFilter(Context c) {
+        spe(c).remove(PREF_KEY_SEARCH_FILTER).apply();
     }
 
     public static float getTextSize(Context c){

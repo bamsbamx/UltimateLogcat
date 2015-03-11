@@ -11,7 +11,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="?actionBarSize"
 		android:background="@color/theme_primary"
-		app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+		app:theme="@style/ActionBarThemeOverlay"
 		app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 	
 	<ImageView

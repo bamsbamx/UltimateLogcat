@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -124,6 +126,43 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        final MenuItem searchItem = menu.findItem(R.id.action_filter);
+        if (searchItem != null) {
+            final SearchView view = (SearchView) searchItem.getActionView();
+            if (view != null) {
+                view.setOnCloseListener(new SearchView.OnCloseListener() {
+                    @Override
+                    public boolean onClose() {
+                        PrefUtils.removeSearchFilter(ActivityMain.this);
+                        mLogcat.setSearchFilter("");
+                        return false;
+                    }
+                });
+                view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        view.clearFocus();
+                        PrefUtils.setSearchFilter(ActivityMain.this, s);
+                        if (mLogcat != null) {
+                            mLogcat.setSearchFilter(s);
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        return false;
+                    }
+                });
+                final String filter = PrefUtils.getSearchFilter(this);
+                if (!TextUtils.isEmpty(filter)) {
+                    view.setQuery(filter, true);
+                    view.setIconified(false);
+                    view.clearFocus();
+                }
+                view.setQueryHint(getString(R.string.action_filter));
+            }
+        }
         return true;
     }
 
@@ -138,20 +177,20 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
 		}
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch(keyCode){
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                mAutoScroll = false;
-                mRecyclerView.scrollToPosition(mRecyclerAdapter.getItemCount() -1);
-                return true;
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                mAutoScroll = true;
-                mRecyclerView.scrollToPosition(mRecyclerAdapter.getItemCount() -1);
-                return true;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        switch(keyCode){
+//            case KeyEvent.KEYCODE_VOLUME_UP:
+//                mAutoScroll = false;
+//                mRecyclerView.scrollToPosition(mRecyclerAdapter.getItemCount() -1);
+//                return true;
+//            case KeyEvent.KEYCODE_VOLUME_DOWN:
+//                mAutoScroll = true;
+//                mRecyclerView.scrollToPosition(mRecyclerAdapter.getItemCount() -1);
+//                return true;
+//        }
+//        return false;
+//    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

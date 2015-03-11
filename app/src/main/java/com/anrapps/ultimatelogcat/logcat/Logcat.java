@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 /**
 *	Usage: Must create an instance of Logcat via its constructor which requires a Handler. After
@@ -165,23 +166,42 @@ public class Logcat {
     }
 
 	/**
-	 *	Sets a search filter for the output logs. This will restart the task so the old logs will be 
-	 *	filtered as well
+	 * Sets a search filter for the output logs. This will restart the task so the old logs will be
+	 * filtered as well
 	 *
-	 *	@param searchFilter Filter which will be used to get logs
+	 * @param searchFilter Filter which will be used to get logs
 	 */
-    public void setSearchFilter(String searchFilter){
-        this.mLogFilter = searchFilter;
-        if (isRunning()){
-            mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener(){
-                @Override
-                public void onTaskFinished() {
-                    start();
-                }
-            });
-            stop();
-        }
-    }
+	public void setSearchFilter(String searchFilter) {
+		if (TextUtils.isEmpty(searchFilter)) {
+			removeSearchFilter();
+		}
+		this.mLogFilter = searchFilter;
+		if (isRunning()) {
+			mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
+				@Override
+				public void onTaskFinished() {
+					start();
+				}
+			});
+			stop();
+		}
+	}
+
+	/**
+	 *	Removes the previously set filter
+	 */
+	public void removeSearchFilter() {
+		this.mLogFilter = null;
+		if (isRunning()){
+			mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener(){
+				@Override
+				public void onTaskFinished() {
+					start();
+				}
+			});
+			stop();
+		}
+	}
 	
 	private class LogcatTask extends AsyncTask<Void, Void, Void> {
 
