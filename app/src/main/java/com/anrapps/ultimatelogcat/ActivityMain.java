@@ -254,7 +254,8 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
             if (activity == null) return;
             switch (msg.what){
                 case Logcat.CAT_LOGS:
-                    List<Log> catLogs = (List<Log>) msg.obj;
+                    @SuppressWarnings("unchecked")
+                        List<Log> catLogs = (List<Log>) msg.obj;
                     activity.updateLogs(catLogs);
                     break;
                 case Logcat.CLEAR_LOGS:

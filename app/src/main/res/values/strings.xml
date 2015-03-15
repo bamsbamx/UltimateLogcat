@@ -1,13 +1,19 @@
 <resources>
 	
     <string name="app_name">Ultimate Logcat</string>
+    <string name="crash_finder">Crash Finder</string>
 
     <string name="label_settings">Settings</string>
+
+    <string name="shortcut_start_crash_finder">Start Crash Finder</string>
 
     <string name="action_filter">Filter logs</string>
     <string name="action_settings">Settings</string>
 	
 	<string name="done">Done</string>
+    <string name="save">Save</string>
+    <string name="stop">Stop</string>
+    <string name="error">An error occurred</string>
 
     <string name="preference_category_log">Log</string>
     <string name="preference_category_interface">Interface</string>
@@ -26,6 +32,10 @@
     <string name="text_adb_command">\"adb shell\"\n\"pm grant com.anrapps.ultimatelogcat android.permission.READ_LOGS\"</string>
 	<string name="text_adb_steps">1.Activate USB debugging option\n2.Connect to ADB\n3.Insert the following two commands</string>
     <string name="text_root_error">An error occurred, try ADB method instead</string>
+    <string name="text_crash_finder_started">Crash Finder started</string>
+    <string name="text_looking_for_crashes">Looking for crashes…</string>
+    <string name="text_found_crashes">%s crashes found</string>
+    <string name="text_log_saved">Log saved to /UltimateLogcat</string>
 	
 	<string name="verbose_title">Verbose</string>
     <string name="debug_title">Debug</string>
