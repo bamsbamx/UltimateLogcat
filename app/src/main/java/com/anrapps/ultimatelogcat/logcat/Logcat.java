@@ -120,8 +120,13 @@ public class Logcat {
 	public void setLevel(Level level){
 		this.mLogLevel = level;
         if (isRunning()){
-			mLogcatTask.setOnTaskFinishedListener(this::start);
-			stop();
+			mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
+                @Override
+                public void onTaskFinished() {
+                    start();
+                }
+            });
+            stop();
 		}
 	}
 
@@ -133,7 +138,12 @@ public class Logcat {
     public void setFormat(Format format) {
         this.mLogFormat = format;
         if (isRunning()) {
-            mLogcatTask.setOnTaskFinishedListener(this::start);
+            mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
+                @Override
+                public void onTaskFinished() {
+                    start();
+                }
+            });
             stop();
         }
     }
@@ -146,7 +156,12 @@ public class Logcat {
     public void setBuffer(Buffer buffer) {
         this.mLogBuffer = buffer;
         if (isRunning()) {
-            mLogcatTask.setOnTaskFinishedListener(this::start);
+            mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
+                @Override
+                public void onTaskFinished() {
+                    start();
+                }
+            });
             stop();
         }
     }
@@ -163,8 +178,13 @@ public class Logcat {
 		}
 		this.mLogFilter = searchFilter;
 		if (isRunning()) {
-			mLogcatTask.setOnTaskFinishedListener(this::start);
-			stop();
+            mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
+                @Override
+                public void onTaskFinished() {
+                    start();
+                }
+            });
+            stop();
 		}
 	}
 
@@ -174,8 +194,13 @@ public class Logcat {
 	public void removeSearchFilter() {
 		this.mLogFilter = null;
 		if (isRunning()){
-			mLogcatTask.setOnTaskFinishedListener(this::start);
-			stop();
+            mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
+                @Override
+                public void onTaskFinished() {
+                    start();
+                }
+            });
+            stop();
 		}
 	}
 	

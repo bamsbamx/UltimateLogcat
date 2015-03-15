@@ -30,24 +30,27 @@ public class LogSaver {
 			return;
 		}
 
-		new Thread(() -> {
-            File storage = Environment.getExternalStorageDirectory();
-            @SuppressLint("SimpleDateFormat")
+		new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File storage = Environment.getExternalStorageDirectory();
+                @SuppressLint("SimpleDateFormat")
                 final SimpleDateFormat sdf = new SimpleDateFormat("MM-dd_HH:mm:ss");
-            final String fileName = "Log_" + sdf.format(Calendar.getInstance().getTime()) + ".ulc";
-            File destiny = new File(storage.toString() + "/UltimateLogcat", fileName);
-            destiny.getParentFile().mkdirs();
+                final String fileName = "Log_" + sdf.format(Calendar.getInstance().getTime()) + ".ulc";
+                File destiny = new File(storage.toString() + "/UltimateLogcat", fileName);
+                destiny.getParentFile().mkdirs();
 
-            try {
-                OutputStream os = new FileOutputStream(destiny);
-                for (Log log : logList) {
-os.write((log.getMessage() + "\n").getBytes());
-}
-os.close();
-mLogSavedListener.onLogSaved(true);
-} catch (IOException e) {
-mLogSavedListener.onLogSaved(false);
-                e.printStackTrace(); }
+                try {
+                    OutputStream os = new FileOutputStream(destiny);
+                    for (Log log : logList) {
+                        os.write((log.getMessage() + "\n").getBytes());
+                    }
+                    os.close();
+                    mLogSavedListener.onLogSaved(true);
+                } catch (IOException e) {
+                    mLogSavedListener.onLogSaved(false);
+                    e.printStackTrace(); }
+            }
         }).start();
 	}
 

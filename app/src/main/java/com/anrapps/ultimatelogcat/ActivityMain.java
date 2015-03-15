@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
@@ -91,10 +92,13 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
         mRecyclerView.setHasFixedSize(true);        
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mRecyclerAdapter);
-        mRecyclerView.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP)
-                if (mRecyclerView.canScrollVertically(1)) mAutoScroll = false;
-            return false;
+        mRecyclerView.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP)
+                    if (mRecyclerView.canScrollVertically(1)) mAutoScroll = false;
+                return false;
+            }
         });
         mRecyclerView.setOnScrollListener(new UIUtils.ScrollManager(
                 toolbarContainer != null ? toolbarContainer : mToolbar) {
@@ -138,10 +142,13 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
             searchItem.setIcon(R.drawable.ic_action_search);
             final SearchView view = (SearchView) searchItem.getActionView();
             if (view != null) {
-                view.setOnCloseListener(() -> {
-                    PrefUtils.removeSearchFilter(ActivityMain.this);
-                    mLogcat.setSearchFilter("");
-                    return false;
+                view.setOnCloseListener(new SearchView.OnCloseListener() {
+                    @Override
+                    public boolean onClose() {
+                        PrefUtils.removeSearchFilter(ActivityMain.this);
+                        mLogcat.setSearchFilter("");
+                        return false;
+                    }
                 });
                 view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
@@ -210,7 +217,12 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), mToolbarColor, toColor);
         colorAnimation.setDuration(300);
         colorAnimation.setInterpolator(new AccelerateInterpolator());
-        colorAnimation.addUpdateListener(animator -> mToolbar.setBackgroundColor((Integer) animator.getAnimatedValue()));
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator animator) {
+            mToolbar.setBackgroundColor((Integer) animator.getAnimatedValue());
+            }
+        });
         colorAnimation.addListener(new Animator.AnimatorListener() {
             @Override public void onAnimationStart(Animator animation) {}
             @Override public void onAnimationCancel(Animator animation) {}
