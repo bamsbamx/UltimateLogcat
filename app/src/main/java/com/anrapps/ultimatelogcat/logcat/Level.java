@@ -6,12 +6,12 @@ import com.anrapps.ultimatelogcat.R;
 
 public enum Level {
 
-    V(0, "#121212", R.string.verbose_title),
-    D(1, "#00006C", R.string.debug_title),
-    I(2, "#20831B", R.string.info_title),
-    W(3, "#FD7916", R.string.warn_title),
-    E(4, "#FD0010", R.string.error_title),
-    F(5, "#ff0066", R.string.assert_title),
+    V(0, "#263238", R.string.verbose_title),
+    D(1, "#0D47A1", R.string.debug_title),
+    I(2, "#1B5E20", R.string.info_title),
+    W(3, "#F57F17", R.string.warn_title),
+    E(4, "#B71C1C", R.string.error_title),
+    F(5, "#4A148C", R.string.assert_title),
 	U(6, "#000000", R.string.unknown_title);
 
     private static Level[] allLevels = new Level[6];
