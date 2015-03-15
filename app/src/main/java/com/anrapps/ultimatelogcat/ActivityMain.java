@@ -37,7 +37,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.anrapps.ultimatelogcat.logcat.Level;
-
+//TODO: Change log level colors
+//TODO: Remove action menu item debug
 public class ActivityMain extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 	
 	public static final int MAX_LOG_ITEMS = 500;
