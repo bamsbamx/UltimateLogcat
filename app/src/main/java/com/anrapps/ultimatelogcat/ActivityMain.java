@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,9 +24,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.anrapps.ultimatelogcat.adapter.AdapterLog;
 import com.anrapps.ultimatelogcat.logcat.Log;
@@ -37,7 +36,6 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.anrapps.ultimatelogcat.logcat.Level;
-//TODO: Change log level colors
 //TODO: Remove action menu item debug
 public class ActivityMain extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 	
@@ -139,6 +137,7 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
         final MenuItem searchItem = menu.findItem(R.id.action_filter);
         if (searchItem != null) {
+            searchItem.setIcon(R.drawable.ic_action_search);
             final SearchView view = (SearchView) searchItem.getActionView();
             if (view != null) {
                 view.setOnCloseListener(new SearchView.OnCloseListener() {
@@ -183,6 +182,13 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
 			case R.id.action_settings:
                 ActivitySettings.start(this, false);
 				return true;
+            case R.id.action_debug:
+                android.util.Log.v("Test", "This a great test for great colors");
+                android.util.Log.d("Test", "This a great test for great colors");
+                android.util.Log.i("Test", "This a great test for great colors");
+                android.util.Log.w("Test", "This a great test for great colors");
+                android.util.Log.e("Test", "This a great test for great colors");
+                android.util.Log.wtf("Test", "This a great test for great colors");
         	default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -198,7 +204,6 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
         PrefUtils.setLevel(this, level);
         mLogcat.setLevel(level);
         changeToolbarBackgroundColor(level.getColor());
-        Toast.makeText(this, "OnItemSelected: " + position, Toast.LENGTH_SHORT).show();
     }
 
     @Override
