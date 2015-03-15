@@ -22,6 +22,7 @@ import android.text.TextUtils;
 *	this way it will send empty message with @see CLEAR_LOGS.
 *
 */
+@SuppressWarnings("unused")
 public class Logcat {
 	
 	//CAT: Add new log items
@@ -119,12 +120,7 @@ public class Logcat {
 	public void setLevel(Level level){
 		this.mLogLevel = level;
         if (isRunning()){
-			mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener(){
-                @Override
-                public void onTaskFinished() {
-                    start();
-                }
-			});
+			mLogcatTask.setOnTaskFinishedListener(this::start);
 			stop();
 		}
 	}
@@ -137,12 +133,7 @@ public class Logcat {
     public void setFormat(Format format) {
         this.mLogFormat = format;
         if (isRunning()) {
-            mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
-                @Override
-                public void onTaskFinished() {
-                    start();
-                }
-            });
+            mLogcatTask.setOnTaskFinishedListener(this::start);
             stop();
         }
     }
@@ -155,12 +146,7 @@ public class Logcat {
     public void setBuffer(Buffer buffer) {
         this.mLogBuffer = buffer;
         if (isRunning()) {
-            mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
-                @Override
-                public void onTaskFinished() {
-                    start();
-                }
-            });
+            mLogcatTask.setOnTaskFinishedListener(this::start);
             stop();
         }
     }
@@ -177,12 +163,7 @@ public class Logcat {
 		}
 		this.mLogFilter = searchFilter;
 		if (isRunning()) {
-			mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener() {
-				@Override
-				public void onTaskFinished() {
-					start();
-				}
-			});
+			mLogcatTask.setOnTaskFinishedListener(this::start);
 			stop();
 		}
 	}
@@ -193,12 +174,7 @@ public class Logcat {
 	public void removeSearchFilter() {
 		this.mLogFilter = null;
 		if (isRunning()){
-			mLogcatTask.setOnTaskFinishedListener(new OnTaskFinishedListener(){
-				@Override
-				public void onTaskFinished() {
-					start();
-				}
-			});
+			mLogcatTask.setOnTaskFinishedListener(this::start);
 			stop();
 		}
 	}

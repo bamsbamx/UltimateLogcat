@@ -91,15 +91,9 @@ public class CrashFinder extends Service implements LogSaver.OnLogSavedListener{
 
     @Override
     public void onLogSaved(final boolean success) {
-        mLogHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(CrashFinder.this,
-                        success ? R.string.text_log_saved : R.string.error,
-                        Toast.LENGTH_SHORT).show();
-
-            }
-        });
+        mLogHandler.post(() -> Toast.makeText(CrashFinder.this,
+                success ? R.string.text_log_saved : R.string.error,
+                Toast.LENGTH_SHORT).show());
     }
 
 

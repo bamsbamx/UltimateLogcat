@@ -36,7 +36,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.anrapps.ultimatelogcat.logcat.Level;
-//TODO: Remove action menu item debug
+
 public class ActivityMain extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 	
 	public static final int MAX_LOG_ITEMS = 500;
@@ -91,13 +91,10 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
         mRecyclerView.setHasFixedSize(true);        
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mRecyclerAdapter);
-        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP)
-                    if (mRecyclerView.canScrollVertically(1)) mAutoScroll = false;
-                return false;
-            }
+        mRecyclerView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP)
+                if (mRecyclerView.canScrollVertically(1)) mAutoScroll = false;
+            return false;
         });
         mRecyclerView.setOnScrollListener(new UIUtils.ScrollManager(
                 toolbarContainer != null ? toolbarContainer : mToolbar) {
@@ -130,7 +127,8 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
 		super.onPause();
         mLogHandler = null;
         if (mLogcat != null) mLogcat.stop();
-	}
+        mLogcat = null;
+    }
 	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -140,13 +138,10 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
             searchItem.setIcon(R.drawable.ic_action_search);
             final SearchView view = (SearchView) searchItem.getActionView();
             if (view != null) {
-                view.setOnCloseListener(new SearchView.OnCloseListener() {
-                    @Override
-                    public boolean onClose() {
-                        PrefUtils.removeSearchFilter(ActivityMain.this);
-                        mLogcat.setSearchFilter("");
-                        return false;
-                    }
+                view.setOnCloseListener(() -> {
+                    PrefUtils.removeSearchFilter(ActivityMain.this);
+                    mLogcat.setSearchFilter("");
+                    return false;
                 });
                 view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
@@ -182,14 +177,7 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
 			case R.id.action_settings:
                 ActivitySettings.start(this, false);
 				return true;
-            case R.id.action_debug:
-                android.util.Log.v("Test", "This a great test for great colors");
-                android.util.Log.d("Test", "This a great test for great colors");
-                android.util.Log.i("Test", "This a great test for great colors");
-                android.util.Log.w("Test", "This a great test for great colors");
-                android.util.Log.e("Test", "This a great test for great colors");
-                android.util.Log.wtf("Test", "This a great test for great colors");
-        	default:
+            default:
 				return super.onOptionsItemSelected(item);
 		}
     }
@@ -222,12 +210,7 @@ public class ActivityMain extends ActionBarActivity implements AdapterView.OnIte
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), mToolbarColor, toColor);
         colorAnimation.setDuration(300);
         colorAnimation.setInterpolator(new AccelerateInterpolator());
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                mToolbar.setBackgroundColor((Integer) animator.getAnimatedValue());
-            }
-        });
+        colorAnimation.addUpdateListener(animator -> mToolbar.setBackgroundColor((Integer) animator.getAnimatedValue()));
         colorAnimation.addListener(new Animator.AnimatorListener() {
             @Override public void onAnimationStart(Animator animation) {}
             @Override public void onAnimationCancel(Animator animation) {}

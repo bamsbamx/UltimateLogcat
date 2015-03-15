@@ -11,7 +11,6 @@ import android.preference.PreferenceFragment;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.anrapps.ultimatelogcat.util.PrefUtils;
 
@@ -25,19 +24,16 @@ public class ActivitySettings extends ActionBarActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         toolbar.setTitle(R.string.label_settings);
         toolbar.setNavigationIcon(R.drawable.ic_up);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    navigateUpToFromChild(ActivitySettings.this,
-                            IntentCompat.makeMainActivity(new ComponentName(ActivitySettings.this,
-                                    ActivityMain.class)));
-                } else {
-                    Intent intent = new Intent(ActivitySettings.this, ActivityMain.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                }
+        toolbar.setNavigationOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                navigateUpToFromChild(ActivitySettings.this,
+                        IntentCompat.makeMainActivity(new ComponentName(ActivitySettings.this,
+                                ActivityMain.class)));
+            } else {
+                Intent intent = new Intent(ActivitySettings.this, ActivityMain.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -67,11 +63,6 @@ public class ActivitySettings extends ActionBarActivity {
             bindPreferenceSummaryToValue(findPreference(PrefUtils.PREFERENCE_KEY_TEXT_FONT));
         }
 
-        @Override
-        public void onDestroy() {
-            super.onDestroy();
-        }
-
         private static void bindPreferenceSummaryToValue(Preference preference) {
             if (preference == null) return; //The user is lower API level
             preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
@@ -81,23 +72,20 @@ public class ActivitySettings extends ActionBarActivity {
                             .getString(preference.getKey(), ""));
         }
 
-        private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object value) {
-                if (preference instanceof ListPreference) {
-                    ListPreference listPreference = (ListPreference) preference;
-                    int index = listPreference.findIndexOfValue(value.toString());
+        private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
+            if (preference instanceof ListPreference) {
+                ListPreference listPreference = (ListPreference) preference;
+                int index = listPreference.findIndexOfValue(value.toString());
 
-                    preference.setSummary(
-                            index >= 0
-                                    ? listPreference.getEntries()[index]
-                                    : null);
+                preference.setSummary(
+                        index >= 0
+                                ? listPreference.getEntries()[index]
+                                : null);
 
-                } else {
-                    preference.setSummary(value.toString());
-                }
-                return true;
+            } else {
+                preference.setSummary(value.toString());
             }
+            return true;
         };
 
 
